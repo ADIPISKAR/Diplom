@@ -7,17 +7,20 @@
     <style>
         :root {
             color-scheme: light;
-            --page: #eef2f5;
+            --page: #edf4ff;
             --surface: #ffffff;
-            --surface-soft: #f8fafb;
-            --line: #d6dde5;
-            --text: #1b2632;
-            --muted: #667789;
-            --accent: #0f766e;
-            --accent-dark: #0b5f59;
-            --warning: #c05621;
+            --surface-soft: #f7fbff;
+            --line: #cfddf0;
+            --text: #172033;
+            --muted: #64748b;
+            --accent: #2563eb;
+            --accent-dark: #1d4ed8;
+            --accent-soft: #dbeafe;
+            --navy: #0f172a;
+            --cyan: #14b8a6;
+            --warning: #d97706;
             --danger: #b42318;
-            --shadow: 0 16px 38px rgba(31, 41, 51, .12);
+            --shadow: 0 18px 42px rgba(37, 99, 235, .14);
         }
 
         * { box-sizing: border-box; }
@@ -26,7 +29,9 @@
             margin: 0;
             min-height: 100vh;
             font-family: Inter, Arial, sans-serif;
-            background: var(--page);
+            background:
+                linear-gradient(180deg, #dbeafe 0, var(--page) 290px),
+                var(--page);
             color: var(--text);
         }
 
@@ -39,9 +44,9 @@
             gap: 18px;
             align-items: center;
             padding: 18px 28px;
-            background: #17212b;
+            background: linear-gradient(135deg, var(--navy) 0%, #1e3a8a 48%, #2563eb 100%);
             color: #fff;
-            box-shadow: 0 8px 24px rgba(23, 33, 43, .18);
+            box-shadow: 0 10px 34px rgba(30, 58, 138, .24);
         }
 
         .topbar h1 {
@@ -75,10 +80,12 @@
             align-items: flex-start;
             min-height: 116px;
             padding: 18px;
-            background: var(--surface);
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, .96), rgba(247, 251, 255, .98)),
+                var(--surface);
             border: 1px solid var(--line);
             border-radius: 8px;
-            box-shadow: 0 8px 22px rgba(31, 41, 51, .06);
+            box-shadow: 0 12px 26px rgba(37, 99, 235, .08);
         }
 
         .stat span {
@@ -99,7 +106,7 @@
             display: inline-grid;
             place-items: center;
             border-radius: 8px;
-            background: #e6f4f1;
+            background: var(--accent-soft);
             color: var(--accent);
             font-weight: 800;
         }
@@ -125,7 +132,7 @@
             border-radius: 8px;
             margin-bottom: 18px;
             overflow: hidden;
-            box-shadow: 0 10px 26px rgba(31, 41, 51, .07);
+            box-shadow: 0 14px 30px rgba(37, 99, 235, .09);
         }
 
         .panel-header {
@@ -135,7 +142,7 @@
             align-items: center;
             padding: 16px 18px;
             border-bottom: 1px solid var(--line);
-            background: var(--surface-soft);
+            background: linear-gradient(90deg, #f8fbff, #eff6ff);
         }
 
         .panel-header h2 {
@@ -178,7 +185,7 @@
         }
 
         input:focus, select:focus, textarea:focus {
-            outline: 2px solid rgba(15, 118, 110, .18);
+            outline: 2px solid rgba(37, 99, 235, .18);
             border-color: var(--accent);
         }
 
@@ -223,7 +230,7 @@
             background: #fbfcfd;
         }
 
-        tbody tr:hover { background: #f8fbfa; }
+        tbody tr:hover { background: #f8fbff; }
 
         .inline-form {
             display: grid;
@@ -241,10 +248,143 @@
             min-height: 26px;
             padding: 3px 9px;
             border-radius: 6px;
-            background: #edf7f5;
+            background: var(--accent-soft);
             color: var(--accent-dark);
             font-weight: 800;
             font-size: 12px;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: minmax(280px, .85fr) minmax(320px, 1fr) minmax(320px, 1fr);
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .chart-card {
+            min-height: 280px;
+            padding: 18px;
+            margin-bottom: 18px;
+            background: rgba(255, 255, 255, .95);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-card h2 {
+            margin: 0 0 6px;
+            font-size: 18px;
+        }
+
+        .chart-card p {
+            margin: 0 0 16px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .donut-wrap {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .donut {
+            width: 150px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background:
+                radial-gradient(circle at center, #fff 0 55%, transparent 56%),
+                conic-gradient(var(--accent) calc(var(--value) * 1%), #dbeafe 0);
+            box-shadow: inset 0 0 0 1px #bfdbfe;
+        }
+
+        .donut strong {
+            font-size: 28px;
+            color: var(--accent-dark);
+        }
+
+        .legend {
+            display: grid;
+            gap: 9px;
+        }
+
+        .legend-row, .bar-row {
+            display: grid;
+            grid-template-columns: 14px 1fr auto;
+            gap: 9px;
+            align-items: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--dot);
+        }
+
+        .bar-list {
+            display: grid;
+            gap: 13px;
+        }
+
+        .bar-row {
+            grid-template-columns: minmax(104px, 1fr) 2.4fr auto;
+        }
+
+        .bar-track {
+            height: 10px;
+            border-radius: 999px;
+            background: #e2e8f0;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            width: var(--width);
+            height: 100%;
+            min-width: 3px;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--bar), #60a5fa);
+        }
+
+        .revenue-card {
+            color: #fff;
+            background:
+                linear-gradient(135deg, #1e3a8a 0%, #2563eb 58%, #0ea5e9 100%);
+            border: 0;
+            overflow: hidden;
+        }
+
+        .revenue-card h2,
+        .revenue-card p {
+            color: #fff;
+        }
+
+        .revenue-value {
+            margin-top: 18px;
+            font-size: 38px;
+            line-height: 1;
+            font-weight: 900;
+        }
+
+        .sparkline {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 76px;
+            margin-top: 28px;
+        }
+
+        .sparkline i {
+            flex: 1;
+            min-width: 14px;
+            border-radius: 6px 6px 0 0;
+            background: rgba(255, 255, 255, .72);
+            height: var(--h);
         }
 
         .sim-toggle { display: none; }
@@ -322,6 +462,8 @@
 
             .shell { padding: 14px; }
             .panel-body { padding: 14px; }
+            .analytics-grid { grid-template-columns: 1fr; }
+            .donut-wrap { grid-template-columns: 1fr; justify-items: center; }
             .sim-tab { top: auto; bottom: 16px; writing-mode: initial; transform: none; border-radius: 8px 0 0 8px; }
         }
     </style>
@@ -411,6 +553,74 @@
         <div class="stat"><div><span>Доступно</span><b>{{ $availablePowerbanksCount }}</b></div><mark>OK</mark></div>
         <div class="stat"><div><span>Активные аренды</span><b>{{ $activeRentalsCount }}</b></div><mark>A</mark></div>
     </div>
+
+    @php
+        $rentalMax = max(1, collect($rentalStatusChart)->max('value'));
+    @endphp
+
+    <div class="analytics-grid">
+        <section class="chart-card">
+            <h2>Доступность устройств</h2>
+            <p>Доля повербанков, которые сейчас можно выдать пользователю.</p>
+            <div class="donut-wrap">
+                <div class="donut" style="--value: {{ $powerbankAvailabilityPercent }}">
+                    <strong>{{ $powerbankAvailabilityPercent }}%</strong>
+                </div>
+                <div class="legend">
+                    @foreach($powerbankStatusChart as $item)
+                        <div class="legend-row">
+                            <span class="dot" style="--dot: {{ $item['color'] }}"></span>
+                            <span>{{ $item['label'] }}</span>
+                            <b>{{ $item['value'] }}</b>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        <section class="chart-card">
+            <h2>Статусы аренд</h2>
+            <p>Как распределяются пользовательские действия по текущим арендам.</p>
+            <div class="bar-list">
+                @foreach($rentalStatusChart as $item)
+                    <div class="bar-row">
+                        <span>{{ $item['label'] }}</span>
+                        <span class="bar-track">
+                            <i class="bar-fill" style="--bar: {{ $item['color'] }}; --width: {{ round($item['value'] / $rentalMax * 100) }}%"></i>
+                        </span>
+                        <b>{{ $item['value'] }}</b>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+
+        <section class="chart-card revenue-card">
+            <h2>Оплаченная выручка</h2>
+            <p>Сумма платежей со статусом paid.</p>
+            <div class="revenue-value">{{ number_format($paidRevenue, 0, ',', ' ') }} ₽</div>
+            <div class="sparkline" aria-hidden="true">
+                @foreach([42, 58, 34, 74, 64, 88, 70] as $height)
+                    <i style="--h: {{ $height }}%"></i>
+                @endforeach
+            </div>
+        </section>
+    </div>
+
+    <section class="chart-card">
+        <h2>Загрузка станций</h2>
+        <p>Количество повербанков, закрепленных за каждой станцией.</p>
+        <div class="bar-list">
+            @foreach($stationLoadChart as $station)
+                <div class="bar-row">
+                    <span>{{ $station['label'] }}</span>
+                    <span class="bar-track">
+                        <i class="bar-fill" style="--bar: #2563eb; --width: {{ round($station['value'] / $maxStationLoad * 100) }}%"></i>
+                    </span>
+                    <b>{{ $station['value'] }}</b>
+                </div>
+            @endforeach
+        </div>
+    </section>
 
     <section class="panel">
         <div class="panel-header"><h2>Станции</h2><span class="badge">{{ $stations->count() }} записей</span></div>
