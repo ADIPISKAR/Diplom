@@ -14,7 +14,7 @@ class TariffController extends Controller
             'description' => ['nullable', 'string'],
         ]));
 
-        return redirect()->route('dashboard')->with('success', 'Тариф добавлен.');
+        return $this->respond($request, 'Тариф добавлен.');
     }
 
     public function update(Request $request, Tariff $tariff)
@@ -24,13 +24,13 @@ class TariffController extends Controller
             'description' => ['nullable', 'string'],
         ]));
 
-        return redirect()->route('dashboard')->with('success', 'Тариф обновлен.');
+        return $this->respond($request, 'Тариф обновлен.');
     }
 
     public function destroy(Tariff $tariff)
     {
         $tariff->delete();
 
-        return redirect()->route('dashboard')->with('success', 'Тариф удален.');
+        return $this->respond(request(), 'Тариф удален.');
     }
 }

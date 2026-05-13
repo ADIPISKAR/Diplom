@@ -13,13 +13,13 @@ class ErrorLogController extends Controller
             'description' => ['required', 'string'],
         ]));
 
-        return redirect()->route('dashboard')->with('success', 'Запись журнала добавлена.');
+        return $this->respond($request, 'Запись журнала добавлена.');
     }
 
     public function destroy(ErrorLog $errorLog)
     {
         $errorLog->delete();
 
-        return redirect()->route('dashboard')->with('success', 'Запись журнала удалена.');
+        return $this->respond(request(), 'Запись журнала удалена.');
     }
 }

@@ -28,7 +28,7 @@ class PaymentController extends Controller
             $rental->powerbank->update(['status' => 'available']);
         }
 
-        return redirect()->route('dashboard')->with('success', 'Платеж сохранен.');
+        return $this->respond($request, 'Платеж сохранен.');
     }
 
     public function update(Request $request, Payment $payment)
@@ -38,13 +38,13 @@ class PaymentController extends Controller
             'status' => ['required', 'in:paid,pending,failed'],
         ]));
 
-        return redirect()->route('dashboard')->with('success', 'Платеж обновлен.');
+        return $this->respond($request, 'Платеж обновлен.');
     }
 
     public function destroy(Payment $payment)
     {
         $payment->delete();
 
-        return redirect()->route('dashboard')->with('success', 'Платеж удален.');
+        return $this->respond(request(), 'Платеж удален.');
     }
 }

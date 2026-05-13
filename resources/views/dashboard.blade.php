@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Аренда повербанков</title>
     <style>
         :root {
@@ -59,6 +60,25 @@
             margin: 4px 0 0;
             color: #cbd5df;
             font-size: 14px;
+        }
+
+        .topbar-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .user-chip {
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, .22);
+            border-radius: 8px;
+            color: #dbeafe;
+            font-weight: 800;
         }
 
         .shell {
@@ -124,6 +144,38 @@
             background: #fef3f2;
             color: #912018;
             border-color: #fecdca;
+        }
+
+        .toast-stack {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 80;
+            display: grid;
+            gap: 10px;
+            width: min(360px, calc(100vw - 28px));
+        }
+
+        .toast {
+            padding: 13px 14px;
+            border-radius: 8px;
+            background: #eff6ff;
+            color: #1e3a8a;
+            border: 1px solid #bfdbfe;
+            box-shadow: var(--shadow);
+            font-weight: 800;
+            animation: toast-in .18s ease-out;
+        }
+
+        .toast.error {
+            background: #fef3f2;
+            border-color: #fecdca;
+            color: #912018;
+        }
+
+        @keyframes toast-in {
+            from { transform: translateY(8px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .panel {
@@ -479,6 +531,14 @@
     <label class="button-label" for="simulator">Симулятор пользователя</label>
 </header>
 
+<div class="topbar-actions" style="max-width:1480px;margin:14px auto 0;padding:0 24px;">
+    <span class="user-chip" style="background:#1e3a8a;">{{ auth()->user()->name }}</span>
+    <form method="post" action="{{ route('logout') }}">
+        @csrf
+        <button class="warning">Выйти</button>
+    </form>
+</div>
+
 <label class="button-label sim-tab" for="simulator">Симулятор</label>
 
 <aside class="sim-drawer">
@@ -488,6 +548,25 @@
             <div class="muted">Действия меняют реальные записи и сразу отражаются в админ-панели.</div>
         </div>
         <label class="button-label sim-close" for="simulator">X</label>
+    </div>
+
+    <div class="sim-card">
+        <h3>Добавить пользователя</h3>
+        <form method="post" action="{{ route('simulation.store') }}">
+            @csrf
+            <input type="hidden" name="action" value="create_user">
+            <div><label>Имя</label><input name="name" required></div>
+            <div><label>Email</label><input name="email" type="email" required></div>
+            <div><label>Телефон</label><input name="phone" placeholder="+7 900 000-00-00"></div>
+            <div><label>Роль</label>
+                <select name="role" required>
+                    <option value="user">Пользователь</option>
+                    <option value="admin">Администратор</option>
+                </select>
+            </div>
+            <div><label>Пароль</label><input name="password" type="password" value="password" required></div>
+            <button>Создать пользователя</button>
+        </form>
     </div>
 
     <div class="sim-card">
@@ -533,6 +612,8 @@
         </form>
     </div>
 </aside>
+
+<div class="toast-stack" id="toast-stack"></div>
 
 <main class="shell">
     @if(session('success'))
@@ -856,5 +937,85 @@
         </div>
     </section>
 </main>
+<script>
+    const toastStack = document.getElementById('toast-stack');
+
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type === 'error' ? 'error' : ''}`;
+        toast.textContent = message;
+        toastStack.appendChild(toast);
+        window.setTimeout(() => toast.remove(), 3400);
+    }
+
+    async function refreshDashboardFragments() {
+        const response = await fetch(window.location.href, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
+        const html = await response.text();
+        const nextDocument = new DOMParser().parseFromString(html, 'text/html');
+        const nextShell = nextDocument.querySelector('.shell');
+        const nextDrawer = nextDocument.querySelector('.sim-drawer');
+        const shell = document.querySelector('.shell');
+        const drawer = document.querySelector('.sim-drawer');
+        const drawerWasOpen = document.getElementById('simulator')?.checked;
+
+        if (nextShell && shell) {
+            shell.innerHTML = nextShell.innerHTML;
+        }
+
+        if (nextDrawer && drawer) {
+            drawer.innerHTML = nextDrawer.innerHTML;
+        }
+
+        const simulator = document.getElementById('simulator');
+        if (simulator) {
+            simulator.checked = Boolean(drawerWasOpen);
+        }
+    }
+
+    document.addEventListener('submit', async (event) => {
+        const form = event.target;
+
+        if (!form.matches('main form, aside form')) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const submitButton = form.querySelector('button[type="submit"], button:not([type])');
+        if (submitButton) {
+            submitButton.disabled = true;
+        }
+
+        try {
+            const response = await fetch(form.action, {
+                method: form.method || 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: new FormData(form),
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                const errors = data.errors ? Object.values(data.errors).flat().join(' ') : null;
+                throw new Error(errors || data.message || 'Не удалось сохранить изменения.');
+            }
+
+            showToast(data.message || 'Изменения сохранены.');
+            await refreshDashboardFragments();
+        } catch (error) {
+            showToast(error.message, 'error');
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+            }
+        }
+    });
+</script>
 </body>
 </html>

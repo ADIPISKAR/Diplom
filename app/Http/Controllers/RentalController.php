@@ -20,6 +20,10 @@ class RentalController extends Controller
         $powerbank = Powerbank::findOrFail($data['powerbank_id']);
 
         if ($powerbank->status !== 'available') {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Выбранный повербанк недоступен для аренды.'], 422);
+            }
+
             return redirect()->route('dashboard')->withErrors('Выбранный повербанк недоступен для аренды.');
         }
 
@@ -31,7 +35,7 @@ class RentalController extends Controller
 
         $powerbank->update(['status' => 'rented']);
 
-        return redirect()->route('dashboard')->with('success', 'Аренда начата.');
+        return $this->respond($request, 'Аренда начата.');
     }
 
     public function update(Request $request, Rental $rental)
@@ -49,7 +53,7 @@ class RentalController extends Controller
             $rental->powerbank->update(['status' => 'available']);
         }
 
-        return redirect()->route('dashboard')->with('success', 'Статус аренды обновлен.');
+        return $this->respond($request, 'Статус аренды обновлен.');
     }
 
     public function destroy(Rental $rental)
@@ -60,6 +64,6 @@ class RentalController extends Controller
 
         $rental->delete();
 
-        return redirect()->route('dashboard')->with('success', 'Аренда удалена.');
+        return $this->respond(request(), 'Аренда удалена.');
     }
 }

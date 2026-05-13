@@ -14,7 +14,7 @@ class StationController extends Controller
             'status' => ['required', 'in:active,maintenance,inactive'],
         ]));
 
-        return redirect()->route('dashboard')->with('success', 'Станция добавлена.');
+        return $this->respond($request, 'Станция добавлена.');
     }
 
     public function update(Request $request, Station $station)
@@ -24,13 +24,13 @@ class StationController extends Controller
             'status' => ['required', 'in:active,maintenance,inactive'],
         ]));
 
-        return redirect()->route('dashboard')->with('success', 'Станция обновлена.');
+        return $this->respond($request, 'Станция обновлена.');
     }
 
     public function destroy(Station $station)
     {
         $station->delete();
 
-        return redirect()->route('dashboard')->with('success', 'Станция удалена.');
+        return $this->respond(request(), 'Станция удалена.');
     }
 }

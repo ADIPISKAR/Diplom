@@ -17,7 +17,7 @@ class PowerbankController extends Controller
             'status' => ['required', 'in:available,rented,maintenance,lost'],
         ]));
 
-        return redirect()->route('dashboard')->with('success', 'Повербанк добавлен.');
+        return $this->respond($request, 'Повербанк добавлен.');
     }
 
     public function update(Request $request, Powerbank $powerbank)
@@ -29,13 +29,13 @@ class PowerbankController extends Controller
             'status' => ['required', 'in:available,rented,maintenance,lost'],
         ]));
 
-        return redirect()->route('dashboard')->with('success', 'Повербанк обновлен.');
+        return $this->respond($request, 'Повербанк обновлен.');
     }
 
     public function destroy(Powerbank $powerbank)
     {
         $powerbank->delete();
 
-        return redirect()->route('dashboard')->with('success', 'Повербанк удален.');
+        return $this->respond(request(), 'Повербанк удален.');
     }
 }
