@@ -24,6 +24,14 @@ class AdminDashboardController extends Controller
             'paymentsTotal' => Payment::where('status', 'paid')->sum('amount'),
             'openIssuesCount' => Issue::whereIn('status', ['open', 'in_progress'])->count(),
             'recentLogs' => ActivityLog::with('user')->latest('created_at')->limit(8)->get(),
+            'recentRentals' => Rental::with(['user', 'powerbank', 'startStation'])->latest('started_at')->limit(6)->get(),
+            'openIssues' => Issue::with(['user', 'station', 'powerbank'])->whereIn('status', ['open', 'in_progress'])->latest('created_at')->limit(5)->get(),
+            'stationOverview' => Station::withCount(['slots', 'availablePowerbanks'])->latest()->limit(5)->get(),
+            'powerbankStatuses' => Powerbank::query()
+                ->selectRaw('status, count(*) as total')
+                ->groupBy('status')
+                ->orderBy('status')
+                ->get(),
         ]);
     }
 }

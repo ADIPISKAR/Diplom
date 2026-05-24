@@ -7,7 +7,7 @@ Target stack:
 - Node.js and npm
 - Nginx
 - PHP-FPM
-- MySQL database at `91.186.198.41:3306`
+- MySQL database at `230edadc0da0aea808aa603a.twc1.net:3306`
 
 Do not store SSH or MySQL passwords in the repository. Put the MySQL password only into the server-side `.env` file.
 
@@ -49,11 +49,14 @@ APP_DEBUG=false
 APP_URL=http://your-domain-or-ip
 
 DB_CONNECTION=mysql
-DB_HOST=91.186.198.41
+DB_HOST=230edadc0da0aea808aa603a.twc1.net
 DB_PORT=3306
 DB_DATABASE=default_db
 DB_USERNAME=gen_user
 DB_PASSWORD=
+DB_SSL=true
+DB_SSL_VERIFY=false
+MYSQL_ATTR_SSL_CA=/var/www/powerbank-rental/deploy/certs/timeweb-ca.crt
 ```
 
 Then run:
