@@ -2,7 +2,7 @@
 
 Target stack:
 
-- PHP 8.3 with common Laravel extensions
+- PHP 8.4 with common Laravel extensions
 - Composer
 - Node.js and npm
 - Nginx
@@ -18,7 +18,9 @@ apt update
 apt install -y nginx unzip curl git software-properties-common ca-certificates lsb-release
 add-apt-repository ppa:ondrej/php -y
 apt update
-apt install -y php8.3-fpm php8.3-cli php8.3-mysql php8.3-mbstring php8.3-xml php8.3-curl php8.3-zip php8.3-bcmath php8.3-intl
+add-apt-repository ppa:ondrej/php -y
+apt update
+apt install -y php8.4-fpm php8.4-cli php8.4-mysql php8.4-mbstring php8.4-xml php8.4-curl php8.4-zip php8.4-bcmath php8.4-intl
 ```
 
 Install Composer:
@@ -78,7 +80,7 @@ cp deploy/nginx/powerbank-rental.conf /etc/nginx/sites-available/powerbank-renta
 ln -sfn /etc/nginx/sites-available/powerbank-rental /etc/nginx/sites-enabled/powerbank-rental
 nginx -t
 systemctl reload nginx
-systemctl restart php8.3-fpm
+systemctl restart php8.4-fpm
 ```
 
 Initial administrator:
