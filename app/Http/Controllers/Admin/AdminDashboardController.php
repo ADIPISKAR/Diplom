@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\Equipment;
+use App\Models\EquipmentCategory;
+use App\Models\EquipmentRequest;
 use App\Models\Issue;
-use App\Models\Payment;
-use App\Models\Powerbank;
-use App\Models\Rental;
-use App\Models\Station;
+use App\Models\StorageLocation;
 use App\Models\User;
 use Illuminate\View\View;
 
@@ -18,16 +18,15 @@ class AdminDashboardController extends Controller
     {
         return view('admin.dashboard', [
             'usersCount' => User::count(),
-            'stationsCount' => Station::count(),
-            'powerbanksCount' => Powerbank::count(),
-            'activeRentalsCount' => Rental::where('status', 'active')->count(),
-            'paymentsTotal' => Payment::where('status', 'paid')->sum('amount'),
+            'categoriesCount' => EquipmentCategory::count(),
+            'locationsCount' => StorageLocation::count(),
+            'equipmentCount' => Equipment::count(),
+            'pendingRequestsCount' => EquipmentRequest::where('status', 'pending')->count(),
+            'issuedRequestsCount' => EquipmentRequest::whereIn('status', ['issued', 'return_requested'])->count(),
             'openIssuesCount' => Issue::whereIn('status', ['open', 'in_progress'])->count(),
             'recentLogs' => ActivityLog::with('user')->latest('created_at')->limit(8)->get(),
-            'recentRentals' => Rental::with(['user', 'powerbank', 'startStation'])->latest('started_at')->limit(6)->get(),
-            'openIssues' => Issue::with(['user', 'station', 'powerbank'])->whereIn('status', ['open', 'in_progress'])->latest('created_at')->limit(5)->get(),
-            'stationOverview' => Station::withCount(['slots', 'availablePowerbanks'])->latest()->limit(5)->get(),
-            'powerbankStatuses' => Powerbank::query()
+            'recentRequests' => EquipmentRequest::with(['user', 'category', 'equipment'])->latest('requested_at')->limit(6)->get(),
+            'equipmentStatuses' => Equipment::query()
                 ->selectRaw('status, count(*) as total')
                 ->groupBy('status')
                 ->orderBy('status')

@@ -15,10 +15,10 @@ class StoreIssueRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rental_id' => ['nullable', 'exists:rentals,id'],
-            'station_id' => ['nullable', 'exists:stations,id'],
-            'powerbank_id' => ['nullable', 'exists:powerbanks,id'],
-            'issue_type' => ['required', Rule::in(['station_error', 'powerbank_not_returned', 'payment_error', 'broken_powerbank', 'slot_error', 'other'])],
+            'equipment_request_id' => ['nullable', 'exists:equipment_requests,id'],
+            'equipment_id' => ['nullable', 'exists:equipment,id'],
+            'issue_type' => ['required', Rule::in(['broken_equipment', 'late_return', 'wrong_status', 'lost_equipment', 'other'])],
+            'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:5000'],
         ];
     }

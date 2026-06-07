@@ -11,10 +11,11 @@ class Issue extends Model
 
     protected $fillable = [
         'user_id',
-        'rental_id',
-        'station_id',
-        'powerbank_id',
+        'employee_id',
+        'equipment_request_id',
+        'equipment_id',
         'issue_type',
+        'title',
         'description',
         'status',
         'resolved_at',
@@ -30,18 +31,18 @@ class Issue extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function rental(): BelongsTo
+    public function employee(): BelongsTo
     {
-        return $this->belongsTo(Rental::class);
+        return $this->belongsTo(User::class, 'employee_id');
     }
 
-    public function station(): BelongsTo
+    public function equipmentRequest(): BelongsTo
     {
-        return $this->belongsTo(Station::class);
+        return $this->belongsTo(EquipmentRequest::class);
     }
 
-    public function powerbank(): BelongsTo
+    public function equipment(): BelongsTo
     {
-        return $this->belongsTo(Powerbank::class);
+        return $this->belongsTo(Equipment::class);
     }
 }

@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreIssueRequest;
 use App\Models\ActivityLog;
-use App\Models\Powerbank;
-use App\Models\Rental;
-use App\Models\Station;
+use App\Models\Equipment;
+use App\Models\EquipmentRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -16,9 +15,8 @@ class IssueController extends Controller
     public function create(Request $request): View
     {
         return view('issues.create', [
-            'rentals' => $request->user()->rentals()->latest('started_at')->get(),
-            'stations' => Station::orderBy('name')->get(),
-            'powerbanks' => Powerbank::orderBy('serial_number')->get(),
+            'requests' => $request->user()->equipmentRequests()->latest('requested_at')->get(),
+            'equipment' => Equipment::orderBy('name')->get(),
         ]);
     }
 
@@ -26,16 +24,17 @@ class IssueController extends Controller
     {
         $data = $request->validated();
 
-        if (! empty($data['rental_id'])) {
-            $ownsRental = Rental::where('id', $data['rental_id'])
+        if (! empty($data['equipment_request_id'])) {
+            $ownsRequest = EquipmentRequest::where('id', $data['equipment_request_id'])
                 ->where('user_id', $request->user()->id)
                 ->exists();
-            abort_unless($ownsRental, 403);
+
+            abort_unless($ownsRequest || $request->user()->isEmployee(), 403);
         }
 
-        $request->user()->issues()->create($data + ['status' => 'open']);
-        ActivityLog::record($request->user()->id, 'issue_created', 'Создано обращение о проблемной ситуации');
+        $issue = $request->user()->problems()->create($data + ['status' => 'open']);
+        ActivityLog::record($request->user()->id, 'problem_created', 'Создана проблемная ситуация по оборудованию', $issue);
 
-        return redirect()->route('dashboard')->with('success', 'Обращение создано.');
+        return redirect()->route('dashboard')->with('success', 'Проблемная ситуация зарегистрирована.');
     }
 }

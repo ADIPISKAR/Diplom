@@ -15,7 +15,7 @@ class IssueController extends Controller
     public function index(): View
     {
         return view('admin.issues.index', [
-            'issues' => Issue::with(['user', 'rental', 'station', 'powerbank'])
+            'issues' => Issue::with(['user', 'employee', 'equipmentRequest', 'equipment'])
                 ->latest('created_at')
                 ->paginate(25),
         ]);
@@ -29,8 +29,8 @@ class IssueController extends Controller
 
         $data['resolved_at'] = in_array($data['status'], ['resolved', 'closed'], true) ? now() : null;
         $issue->update($data);
-        ActivityLog::record($request->user()->id, 'admin_issue_updated', "Изменён статус обращения #{$issue->id}");
+        ActivityLog::record($request->user()->id, 'admin_issue_updated', "Изменён статус проблемной ситуации #{$issue->id}", $issue);
 
-        return back()->with('success', 'Статус обращения обновлён.');
+        return back()->with('success', 'Статус проблемной ситуации обновлён.');
     }
 }

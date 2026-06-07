@@ -37,32 +37,27 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function bankCards(): HasMany
-    {
-        return $this->hasMany(BankCard::class);
-    }
-
     public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class);
     }
 
-    public function rentals(): HasMany
+    public function equipmentRequests(): HasMany
     {
-        return $this->hasMany(Rental::class);
+        return $this->hasMany(EquipmentRequest::class);
     }
 
-    public function payments(): HasMany
+    public function handledIssues(): HasMany
     {
-        return $this->hasMany(Payment::class);
+        return $this->hasMany(EquipmentIssue::class, 'employee_id');
     }
 
-    public function returns(): HasMany
+    public function handledReturns(): HasMany
     {
-        return $this->hasMany(ReturnModel::class);
+        return $this->hasMany(EquipmentReturn::class, 'employee_id');
     }
 
-    public function issues(): HasMany
+    public function problems(): HasMany
     {
         return $this->hasMany(Issue::class);
     }
@@ -82,8 +77,16 @@ class User extends Authenticatable
         return $this->role?->name === 'admin';
     }
 
-    public function activeRental(): ?Rental
+    public function isEmployee(): bool
     {
-        return $this->rentals()->where('status', 'active')->latest('started_at')->first();
+        return in_array($this->role?->name, ['employee', 'admin'], true);
+    }
+
+    public function activeRequest(): ?EquipmentRequest
+    {
+        return $this->equipmentRequests()
+            ->whereIn('status', ['pending', 'approved', 'issued', 'return_requested'])
+            ->latest('requested_at')
+            ->first();
     }
 }

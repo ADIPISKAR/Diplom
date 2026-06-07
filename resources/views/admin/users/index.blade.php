@@ -1,8 +1,7 @@
 @extends('layouts.app', ['title' => 'Пользователи'])
 
 @section('content')
-@include('admin.partials.nav')
-<h1 class="h2 mb-4">Пользователи</h1>
+<h1 class="h2 fw-bold mb-4">Пользователи</h1>
 <div class="form-section">
     <div class="table-responsive">
         <table class="table">

@@ -11,7 +11,12 @@ class RolesSeeder extends Seeder
     {
         Role::updateOrCreate(
             ['name' => 'user'],
-            ['description' => 'Обычный пользователь сервиса аренды']
+            ['description' => 'Студент, оформляющий заявки на оборудование']
+        );
+
+        Role::updateOrCreate(
+            ['name' => 'employee'],
+            ['description' => 'Сотрудник выдачи, обрабатывающий заявки и возвраты']
         );
 
         Role::updateOrCreate(

@@ -1,7 +1,6 @@
 @extends('layouts.app', ['title' => 'Редактирование пользователя'])
 
 @section('content')
-@include('admin.partials.nav')
 <div class="row justify-content-center">
     <div class="col-lg-7">
         <div class="form-section">

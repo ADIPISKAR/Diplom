@@ -23,5 +23,18 @@ class AdminSeeder extends Seeder
                 'status' => 'active',
             ]
         );
+
+        $employeeRole = Role::where('name', 'employee')->firstOrFail();
+
+        User::updateOrCreate(
+            ['email' => 'employee@example.com'],
+            [
+                'full_name' => 'Сотрудник выдачи',
+                'phone' => '+70000000001',
+                'password' => Hash::make('password'),
+                'role_id' => $employeeRole->id,
+                'status' => 'active',
+            ]
+        );
     }
 }

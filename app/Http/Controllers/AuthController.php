@@ -33,9 +33,15 @@ class AuthController extends Controller
         $request->session()->regenerate();
         ActivityLog::record(Auth::id(), 'login', 'Авторизация в системе');
 
-        return Auth::user()->isAdmin()
-            ? redirect()->intended('/admin')
-            : redirect()->intended('/dashboard');
+        if (Auth::user()->isAdmin()) {
+            return redirect()->intended('/admin');
+        }
+
+        if (Auth::user()->isEmployee()) {
+            return redirect()->intended('/employee');
+        }
+
+        return redirect()->intended('/dashboard');
     }
 
     public function showRegister(): View
