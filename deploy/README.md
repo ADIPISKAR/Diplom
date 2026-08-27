@@ -7,7 +7,7 @@ Target stack:
 - Node.js and npm
 - Nginx
 - PHP-FPM
-- MySQL database at `230edadc0da0aea808aa603a.twc1.net:3306`
+- MySQL database supplied by your hosting provider
 
 Do not store SSH or MySQL passwords in the repository. Put the MySQL password only into the server-side `.env` file.
 
@@ -51,14 +51,17 @@ APP_DEBUG=false
 APP_URL=http://your-domain-or-ip
 
 DB_CONNECTION=mysql
-DB_HOST=230edadc0da0aea808aa603a.twc1.net
+DB_HOST=your-database-host
 DB_PORT=3306
 DB_DATABASE=default_db
-DB_USERNAME=gen_user
+DB_USERNAME=your-database-user
 DB_PASSWORD=
 DB_SSL=true
 DB_SSL_VERIFY=false
 MYSQL_ATTR_SSL_CA=/var/www/powerbank-rental/deploy/certs/timeweb-ca.crt
+
+ADMIN_SEED_PASSWORD=generate-a-unique-strong-password
+EMPLOYEE_SEED_PASSWORD=generate-another-unique-strong-password
 ```
 
 Then run:
@@ -83,9 +86,6 @@ systemctl reload nginx
 systemctl restart php8.4-fpm
 ```
 
-Initial administrator:
-
-- email: `admin@example.com`
-- password: `password`
-
-Change this password immediately after deployment.
+The initial administrator and employee accounts use the passwords supplied only
+through the server-side `.env`. Use unique values, keep them out of shell history,
+and change them after the first successful login.
